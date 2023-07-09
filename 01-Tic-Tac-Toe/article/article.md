@@ -48,8 +48,9 @@ In this first article of our series, we're taking on the challenge of creating a
     - [2.1.1 The Power of Loops: For \& While](#211-the-power-of-loops-for--while)
     - [2.1.2 Displaying the Game Board](#212-displaying-the-game-board)
   - [2.2 Making Moves: Control Flow](#22-making-moves-control-flow)
-    - [2.2.1 Control flow: directing the game's progression with conditionals.](#221-control-flow-directing-the-games-progression-with-conditionals)
-    - [2.2.2 Exercise: Check if a player's move is valid and if they've won.](#222-exercise-check-if-a-players-move-is-valid-and-if-theyve-won)
+    - [2.2.1  Validating Moves: IF \& ELSE](#221--validating-moves-if--else)
+    - [2.2.2 Determining the Winner](#222-determining-the-winner)
+    - [2.2.3 The Full Play Flow](#223-the-full-play-flow)
   - [2.3 Streamlining the Process: Functions](#23-streamlining-the-process-functions)
     - [2.3.1 Learning about functions: simplifying our code and avoiding repetition.](#231-learning-about-functions-simplifying-our-code-and-avoiding-repetition)
     - [2.3.2 Exercise: Break down the game logic into manageable functions.](#232-exercise-break-down-the-game-logic-into-manageable-functions)
@@ -146,12 +147,12 @@ This sets up the names and symbols for two players. `player1_name` is set to `"D
 Next, we define the game board:
 ```python
 game_board = [
-  [" ", " ", " "],
-  [" ", " ", " "],
-  [" ", " ", " "]
+  ["-", "-", "-"],
+  ["-", "-", "-"],
+  ["-", "-", "-"],
 ]
 ```
-This is a list of lists - essentially a grid. Each inner list represents a row on the game board, and each space inside those lists represents a cell on that row. We start with all cells being `" "`, which represents an empty cell. As the game progresses, these will be filled with `"X"` or `"O"`, depending on the players' moves.
+This is a list of lists - essentially a grid. Each inner list represents a row on the game board, and each space inside those lists represents a cell on that row. We start with all cells being `"-"`, which represents an empty cell. As the game progresses, these will be filled with `"X"` or `"O"`, depending on the players' moves.
 
 ## 1.3 Interacting with Players - Input & Output
 In this section, we'll look at how we can make our game interactive by using Python's built-in functions to communicate with our players.
@@ -312,9 +313,66 @@ This gives us a visually pleasing game board that's easy for players to understa
 -|-|-
 ```
 ## 2.2 Making Moves: Control Flow
- 
-### 2.2.1 Control flow: directing the game's progression with conditionals.
-### 2.2.2 Exercise: Check if a player's move is valid and if they've won.
+ In any game, certain rules dictate what can and cannot happen, and our game of Tic Tac Toe is no exception. The way our program responds to different situations, like a player's move or the end of a game, is called control flow.
+
+ By using these control flow structures, we can define the rules of our game, respond to player moves, and determine when the game ends. The ability to control the flow of our program based on conditions and loops is a fundamental aspect of programming and is key to building our Tic Tac Toe game.
+
+### 2.2.1  Validating Moves: IF & ELSE 
+In Python, we use conditionals, statements that control the flow of a program based on certain conditions, to guide our game's progress. The two most common conditional statements are 'if' and 'else'. An 'if' statement checks if a particular condition is true, and if so, it executes a block of code. The 'else' statement catches all other scenarios not caught by the 'if'.
+
+For instance, in our game, we might want to check if a cell on the game board is empty before allowing a player to make a move. We can do that with an 'if' statement like this:
+```python
+# checking if the cell is empty
+if game_board[row][col] == " ":
+    game_board[row][col] = player_symbol
+else:
+    print("Invalid move! Try again.")
+```
+In this example, we're checking if the cell at a particular row and column is empty. If it is, the player's symbol is placed in that cell. If not, the game tells the player that the move is invalid.
+
+### 2.2.2 Determining the Winner
+Beyond checking for valid moves, we also need to know when a player has won the game. In Tic Tac Toe, a player wins when they have three of their symbols in a row, column, or diagonal.
+
+We can check for a win condition after every move by checking all rows, columns, and diagonals. Here's an example of how we might check for a win in a row:
+```python
+for row in game_board:
+    if row.count(player) == 3:
+        return True # we have not discussed functions yet
+```
+This loop iterates over each row in the game board. If a row contains three of the same player's symbol, it means that the player has won, so the function returns True.
+
+To check if a player has won in any column, we have to inspect each column across all rows. In Python, lists are row-major, which means we can't access a whole column as we did with rows. So, we have to iterate over each row and within that, get the elements at the same column index. Here's how you might do it:
+
+```python
+for col in range(3):
+    if game_board[0][col] == game_board[1][col] == game_board[2][col] != " ":
+        return True
+```
+This code loops over each column index (0, 1, 2). For each column, it checks if all the rows have the same value at that column index and that the value isn't an empty space. If all values are the same (meaning, they're all the current player's symbol), it means the player has won, so the function returns True.
+
+Checking for a win in a diagonal is a bit different because there are only two diagonals, and each one needs to be checked separately. Here's how you might do it:
+
+```python
+# Check the first diagonal (top left to bottom right)
+if game_board[0][0] == game_board[1][1] == game_board[2][2] != " ":
+    return True
+
+# Check the second diagonal (top right to bottom left)
+if game_board[0][2] == game_board[1][1] == game_board[2][0] != " ":
+    return True
+```
+Each if statement checks if all cells in a diagonal have the same value (i.e., they're all the current player's symbol) and that the value isn't an empty space. If this is the case, it means the player has won, so the function returns True.
+
+By putting together these checks (for rows, columns, and diagonals), we can correctly determine when a player has won the game.
+
+------ Review and re-write the control flow part.
+
+
+
+
+
+
+### 2.2.3 The Full Play Flow
 ## 2.3 Streamlining the Process: Functions
 ### 2.3.1 Learning about functions: simplifying our code and avoiding repetition.
 ### 2.3.2 Exercise: Break down the game logic into manageable functions.
@@ -330,3 +388,25 @@ This gives us a visually pleasing game board that's easy for players to understa
 ## 3.2 Bonus Round: AI Concepts (Optional)
 ### 3.2.1 Introduction to basic AI concepts: understanding how AI could play Tic Tac Toe.
 ### 3.2.2 Exercise: Spice up the game by implementing a basic AI opponent.
+
+
+--------- alternative titles
+Part 2: Game Logic
+2.1 Looping Concepts
+2.1.1 Power of Loops
+2.1.2 Displaying the Board
+2.2 Control Flow
+2.2.1 Directing Game Progression
+2.2.2 Validating Moves & Winning
+2.3 Functions
+2.3.1 Simplifying Code
+2.3.2 Dividing Game Logic
+2.4 Error Handling
+2.4.1 Making the Game Foolproof
+2.4.2 Handling Invalid Inputs
+Part 3: Assembling the Game
+3.1 Applying Concepts
+3.1.1 Review & Application
+3.2 AI Concepts (Optional)
+3.2.1 Basic AI Principles
+3.2.2 Creating an AI Opponent
