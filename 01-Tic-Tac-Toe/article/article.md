@@ -72,7 +72,8 @@ Navigate to your desired project directory using `cd path_to_your_directory`.
   
 You should in your terminal now see `.venv`  at the beginning of your command line. This means that your virtual environment is active.
 
-![venv](https://github.com/RMagician/LearnPythonGames/blob/master/01%2520-%2520Tic%2520Tac%2520Toe/article/images/i1_venv_activation.png)
+![venv activated in Terminal](https://raw.githubusercontent.com/RMagician/LearnPythonGames/master/01-Tic-Tac-Toe/article/images/i1_venv_activation.png)
+
 </details>
 
 ## Game Basics: Player Names & Symbols
