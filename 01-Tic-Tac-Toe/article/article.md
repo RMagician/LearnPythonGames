@@ -51,18 +51,22 @@ In this first article of our series, we're taking on the challenge of creating a
     - [2.2.1  Validating Moves: IF \& ELSE](#221--validating-moves-if--else)
     - [2.2.2 Determining the Winner](#222-determining-the-winner)
     - [2.2.3 The Full Play Flow](#223-the-full-play-flow)
-  - [2.3 Streamlining the Process: Functions](#23-streamlining-the-process-functions)
-    - [2.3.1 Learning about functions: simplifying our code and avoiding repetition.](#231-learning-about-functions-simplifying-our-code-and-avoiding-repetition)
-    - [2.3.2 Exercise: Break down the game logic into manageable functions.](#232-exercise-break-down-the-game-logic-into-manageable-functions)
-  - [2.4 Catching Mistakes: Error Handling](#24-catching-mistakes-error-handling)
-    - [2.4.1 Handling errors: making our game foolproof with try and except statements.](#241-handling-errors-making-our-game-foolproof-with-try-and-except-statements)
-    - [2.4.2 Exercise: Improve the game's user experience by handling invalid inputs.](#242-exercise-improve-the-games-user-experience-by-handling-invalid-inputs)
-- [Part 3: Assembling the Game](#part-3-assembling-the-game)
-  - [3.1 Applying What We've Learned](#31-applying-what-weve-learned)
-    - [3.1.1 Review and apply all concepts learned to complete our Tic Tac Toe game.](#311-review-and-apply-all-concepts-learned-to-complete-our-tic-tac-toe-game)
+- [Part 3 - Improving the Code](#part-3---improving-the-code)
+  - [3.1 Streamlining the Process: Functions](#31-streamlining-the-process-functions)
+    - [3.1.1 Learning about functions: simplifying our code and avoiding repetition.](#311-learning-about-functions-simplifying-our-code-and-avoiding-repetition)
+    - [3.1.2 Exercise: Break down the game logic into manageable functions.](#312-exercise-break-down-the-game-logic-into-manageable-functions)
+  - [3.2 Catching Mistakes: Error Handling](#32-catching-mistakes-error-handling)
+    - [3.2.1 Handling errors: making our game foolproof with try and except statements.](#321-handling-errors-making-our-game-foolproof-with-try-and-except-statements)
+    - [3.2.2 Exercise: Improve the game's user experience by handling invalid inputs.](#322-exercise-improve-the-games-user-experience-by-handling-invalid-inputs)
+  - [3.3 The Full Play flow (rename me)](#33-the-full-play-flow-rename-me)
+- [Part 4: Implementing basic AI](#part-4-implementing-basic-ai)
   - [3.2 Bonus Round: AI Concepts (Optional)](#32-bonus-round-ai-concepts-optional)
     - [3.2.1 Introduction to basic AI concepts: understanding how AI could play Tic Tac Toe.](#321-introduction-to-basic-ai-concepts-understanding-how-ai-could-play-tic-tac-toe)
     - [3.2.2 Exercise: Spice up the game by implementing a basic AI opponent.](#322-exercise-spice-up-the-game-by-implementing-a-basic-ai-opponent)
+- [Part 5: Review and Next Steps](#part-5-review-and-next-steps)
+    - [3.1.1 Review and apply all concepts learned to complete our Tic Tac Toe game.](#311-review-and-apply-all-concepts-learned-to-complete-our-tic-tac-toe-game)
+  - [3.1 Applying What We've Learned](#31-applying-what-weve-learned)
+- [Part 6: Bonus - Advanced AI](#part-6-bonus---advanced-ai)
 
 # Part 1: Laying the Groundwork
 ----------- WRITE SOMETHING FOR ME ======================
@@ -330,6 +334,24 @@ else:
 ```
 In this example, we're checking if the cell at a particular row and column is empty. If it is, the player's symbol is placed in that cell. If not, the game tells the player that the move is invalid.
 
+And if we want to incorporate a loop to keep asking the player for a move until we get a valid move:
+```python
+while True:
+    row = int(input("Enter the row for your move: "))  
+    col = int(input("Enter the column for your move: ")) 
+
+    # Check if the cell is empty
+    if game_board[row][col] == "-":
+        # Make the move
+        game_board[row][col] = player_symbol
+        # Exit the loop
+        break
+    else:
+        # Notify the player that the move is invalid and they should try again
+        print("Invalid move! Try again.")
+```
+Notice that if there are no valid moves left on the board, the loop will continue forever. This is called an infinite loop, and it's something we want to avoid. We'll learn how to handle this situation in a later section.
+
 ### 2.2.2 Determining the Winner
 Beyond checking for valid moves, we also need to know when a player has won the game. In Tic Tac Toe, a player wins when they have three of their symbols in a row, column, or diagonal.
 
@@ -341,31 +363,56 @@ for row in game_board:
 ```
 This loop iterates over each row in the game board. If a row contains three of the same player's symbol, it means that the player has won, so the function returns True.
 
-To check if a player has won in any column, we have to inspect each column across all rows. In Python, lists are row-major, which means we can't access a whole column as we did with rows. So, we have to iterate over each row and within that, get the elements at the same column index. Here's how you might do it:
+To check if a player has won in any column, we have to inspect each column across all rows. Checking columns in less straightforward than checking the rows. Our game board is organize by rows, and so checking a row is just checking each cell of the row. However, for us to check vertical wins, we need to check the columns. For that we need to check the cell matching each column, in every row. So, we have to iterate over each row and within that, get the elements at the same column index. Here's how you might do it:
 
 ```python
+game_won = False
+player_symbol = "X"
+
 for col in range(3):
-    if game_board[0][col] == game_board[1][col] == game_board[2][col] != " ":
-        return True
+  
+  first_row = game_board[0][col]
+  second_row = game_board[1][col]
+  third_row = game_board[2][col]
+
+  if first_row == player_symbol and 
+    first_row == second_row and
+    first_row == third_row:
+      game_won = True
 ```
 This code loops over each column index (0, 1, 2). For each column, it checks if all the rows have the same value at that column index and that the value isn't an empty space. If all values are the same (meaning, they're all the current player's symbol), it means the player has won, so the function returns True.
 
 Checking for a win in a diagonal is a bit different because there are only two diagonals, and each one needs to be checked separately. Here's how you might do it:
 
 ```python
-# Check the first diagonal (top left to bottom right)
-if game_board[0][0] == game_board[1][1] == game_board[2][2] != " ":
-    return True
+  game_won = False
+  player_symbol = "X"
 
-# Check the second diagonal (top right to bottom left)
-if game_board[0][2] == game_board[1][1] == game_board[2][0] != " ":
-    return True
+  # Check the first diagonal (top left to bottom right)
+  first_diagonal_top_left = game_board[0][0]
+  middle_diagonal = game_board[1][1]
+  first_diagonal_bottom_right = game_board[2][2]
+
+  if first_diagonal_top_left == player_symbol and 
+    first_diagonal_top_left == middle_diagonal and 
+    first_diagonal_top_left == first_diagonal_bottom_right:
+      game_won = True
+
+  # Check the second diagonal (top right to bottom left)
+  second_diagonal_top_right = game_board[0][2]
+  second_diagonal_bottom_left = game_board[2][0]
+
+  if second_diagonal_top_right == player_symbol and 
+    second_diagonal_top_right == middle_diagonal and 
+    second_diagonal_top_right == second_diagonal_bottom_left:
+      game_won = True
+
 ```
 Each if statement checks if all cells in a diagonal have the same value (i.e., they're all the current player's symbol) and that the value isn't an empty space. If this is the case, it means the player has won, so the function returns True.
 
 By putting together these checks (for rows, columns, and diagonals), we can correctly determine when a player has won the game.
 
------- Review and re-write the control flow part.
+------ Review 
 
 
 
@@ -373,21 +420,30 @@ By putting together these checks (for rows, columns, and diagonals), we can corr
 
 
 ### 2.2.3 The Full Play Flow
-## 2.3 Streamlining the Process: Functions
-### 2.3.1 Learning about functions: simplifying our code and avoiding repetition.
-### 2.3.2 Exercise: Break down the game logic into manageable functions.
-## 2.4 Catching Mistakes: Error Handling
+build a mainloop here, bring it all together rough as it is. Mention MVPs, code that works, building a proof of concept 
+# Part 3 - Improving the Code
+## 3.1 Streamlining the Process: Functions
+### 3.1.1 Learning about functions: simplifying our code and avoiding repetition.
+### 3.1.2 Exercise: Break down the game logic into manageable functions.
+## 3.2 Catching Mistakes: Error Handling
 
-### 2.4.1 Handling errors: making our game foolproof with try and except statements.
-### 2.4.2 Exercise: Improve the game's user experience by handling invalid inputs.
+### 3.2.1 Handling errors: making our game foolproof with try and except statements.
+### 3.2.2 Exercise: Improve the game's user experience by handling invalid inputs.
+## 3.3 The Full Play flow (rename me)
 
-# Part 3: Assembling the Game
-## 3.1 Applying What We've Learned
-
-### 3.1.1 Review and apply all concepts learned to complete our Tic Tac Toe game.
+# Part 4: Implementing basic AI
 ## 3.2 Bonus Round: AI Concepts (Optional)
 ### 3.2.1 Introduction to basic AI concepts: understanding how AI could play Tic Tac Toe.
 ### 3.2.2 Exercise: Spice up the game by implementing a basic AI opponent.
+
+# Part 5: Review and Next Steps
+### 3.1.1 Review and apply all concepts learned to complete our Tic Tac Toe game.
+## 3.1 Applying What We've Learned
+
+# Part 6: Bonus - Advanced AI
+
+
+
 
 
 --------- alternative titles
