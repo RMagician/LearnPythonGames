@@ -356,6 +356,8 @@ Notice that if there are no valid moves left on the board, the loop will continu
 Beyond checking for valid moves, we also need to know when a player has won the game. In Tic Tac Toe, a player wins when they have three of their symbols in a row, column, or diagonal.
 
 We can check for a win condition after every move by checking all rows, columns, and diagonals. Here's an example of how we might check for a win in a row:
+
+**Checking for a win in a row**
 ```python
 for row in game_board:
     if row.count(player) == 3:
@@ -363,6 +365,7 @@ for row in game_board:
 ```
 This loop iterates over each row in the game board. If a row contains three of the same player's symbol, it means that the player has won, so the function returns True.
 
+**Checking for a win in a column**
 To check if a player has won in any column, we have to inspect each column across all rows. Checking columns in less straightforward than checking the rows. Our game board is organize by rows, and so checking a row is just checking each cell of the row. However, for us to check vertical wins, we need to check the columns. For that we need to check the cell matching each column, in every row. So, we have to iterate over each row and within that, get the elements at the same column index. Here's how you might do it:
 
 ```python
@@ -382,6 +385,7 @@ for col in range(3):
 ```
 This code loops over each column index (0, 1, 2). For each column, it checks if all the rows have the same value at that column index and that the value isn't an empty space. If all values are the same (meaning, they're all the current player's symbol), it means the player has won, so the function returns True.
 
+**Checking for a win in a diagonal**
 Checking for a win in a diagonal is a bit different because there are only two diagonals, and each one needs to be checked separately. Here's how you might do it:
 
 ```python
@@ -412,9 +416,64 @@ Each if statement checks if all cells in a diagonal have the same value (i.e., t
 
 By putting together these checks (for rows, columns, and diagonals), we can correctly determine when a player has won the game.
 
------- Review 
+**Checking for all Wins**
+Let's look at a more efficient way to do this. Since we know apriori that there are only 8 ways to win the game, we can check for all of them in one go. We will name each cell 0-8, and use a little math to figure out which row/column that refers to. Our game board looks like this:
+  
+```python
+  0 | 1 | 2
+  ---------
+  3 | 4 | 5
+  ---------
+  6 | 7 | 8
+```
+So for us to check for all 3 types of wins, we can look at the specific combinations:
 
+```python
+game_won = False
+EMPTY_COLUMN = "-"
+winning_combinations = [
+  (0, 1, 2), 
+  (3, 4, 5), 
+  (6, 7, 8), 
+  (0, 3, 6), 
+  (1, 4, 7), 
+  (2, 5, 8), 
+  (0, 4, 8), 
+  (2, 4, 6)
+]
 
+for combination in winning_combinations:
+    values = [game_board[cell//3][cell%3] for cell in combination]
+    if values.count(values[0]) == 3 and values[0] != EMPTY_COLUMN:
+        game_won = True 
+        break
+```
+Let's look at some of the details;  
+
+**Break Statement**  
+```python
+    if values.count(values[0]) == 3 and values[0] != EMPTY_COLUMN:
+        game_won = True 
+        break
+```
+Remember when I mentioned infinite loops ? Well, we can use the break statement to break out of a loop. In this case, we are using it to break out of the for loop as soon as we find a winning combination. This is because we don't need to check for any more wins once we find one.
+
+**Loop: for ... in**  
+`for combination in winning_combinations:`  
+The for .. in loop is an extension of the for loop. It allows us to iterate over a list of items. In this case, we are iterating over the list of winning combinations. 
+
+**List Comprehension & A Little Math**  
+`values = [game_board[cell//3][cell%3] for cell in combination]`
+This line of code is a bit tricky. It uses list comprehension to create a list of values from the game board. it is getting the `game_board[cell//3][i%3]` value for each `cell` in the `combination` list. The `game_board[cell//3][cell%3]` is a bit of math that allows us to get the correct row and column for each cell. `cell//3` means full integer division eg 
+ - `4 // 3 = 1`
+ - `6 // 3 = 2`
+ - `7 // 3 = 2`
+  
+Now let's look at `cell%3`. This gets the value of what is the leftover of the full integer division. Here are some examples:
+ - `4 % 3 = 1`
+ - `6 % 3 = 0`
+ - `7 % 3 = 1`
+ - `8 % 3 = 2`
 
 
 
